@@ -1,0 +1,19 @@
+name: EssentialTools
+version: '1.0.0'
+main: it.noahterenzianii.EssentialTools.Main
+api-version: '1.21'
+description: Utility plugin for the server
+author: Noahterenziani
+
+commands:
+  coord:
+    description: Manage saved locations
+    usage: |
+      /coord - Toggle coordinate display
+      /coord get <name> - View saved location details
+      /coord set <name> - Save current location
+      /coord del <name> - Delete saved location
+      /coord all - List all saved locations
+  ping:
+    description: Show visual indicator pointing at a target
+    usage: /ping <player_or_saved_location>
