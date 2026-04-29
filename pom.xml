@@ -7,7 +7,7 @@
 
     <groupId>it.noahterenziani</groupId>
     <artifactId>essentialTools</artifactId>
-    <version>1.0.0</version>
+    <version>2.0.0</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -39,11 +39,11 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Gson per JSON -->
+        <!-- SQLite JDBC driver -->
         <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.10.1</version>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>3.45.1.0</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
@@ -61,7 +61,7 @@
                 </configuration>
             </plugin>
 
-            <!-- Shade plugin per includere Gson -->
+            <!-- Shade plugin per includere SQLite JDBC -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
