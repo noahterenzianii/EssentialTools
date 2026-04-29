@@ -34,6 +34,7 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        coordinateManager.close();
         getLogger().info("Plugin disabled.");
     }
 

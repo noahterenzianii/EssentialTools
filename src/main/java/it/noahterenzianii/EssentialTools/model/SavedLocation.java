@@ -26,6 +26,15 @@ public class SavedLocation {
         this.z = Math.round(location.getZ());
     }
 
+    public SavedLocation(String name, String world, UUID uuid, double x, double y, double z) {
+        this.name = name;
+        this.world = world;
+        this.playerID = uuid;
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+
     public Location toLocation() {
         World w = Bukkit.getWorld(world);
         if (w == null) return null;

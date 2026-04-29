@@ -1,5 +1,5 @@
 name: EssentialTools
-version: '1.0.0'
+version: '2.0.0'
 main: it.noahterenzianii.EssentialTools.Main
 api-version: '1.21'
 description: Utility plugin for the server
