@@ -2,6 +2,7 @@ package it.noahterenzianii.EssentialTools.database;
 
 import it.noahterenzianii.EssentialTools.Main;
 import it.noahterenzianii.EssentialTools.model.SavedLocation;
+import org.bukkit.inventory.ItemStack;
 
 import java.sql.*;
 import java.util.HashMap;
@@ -43,9 +44,21 @@ public class DatabaseManager {
             """;
         try (Statement stmt = connection.createStatement()) {
             stmt.execute(sql);
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to create coordinates table: " + e.getMessage());
+        }
+
+        String sharedChestSQL = """
+            CREATE TABLE IF NOT EXISTS sharedchest (
+                slot INTEGER PRIMARY KEY,
+                item_data BLOB NOT NULL
+            )
+            """;
+        try (Statement stmt = connection.createStatement()) {
+            stmt.execute(sharedChestSQL);
             connection.commit();
         } catch (SQLException e) {
-            plugin.getLogger().severe("Failed to create tables: " + e.getMessage());
+            plugin.getLogger().severe("Failed to create sharedchest table: " + e.getMessage());
         }
     }
 
@@ -128,6 +141,44 @@ public class DatabaseManager {
             plugin.getLogger().severe("Error getting all coordinates: " + e.getMessage());
         }
         return coordinates;
+    }
+
+    public void saveSharedChestItem(int slot, ItemStack item) {
+        String sql = "INSERT OR REPLACE INTO sharedchest (slot, item_data) VALUES (?, ?)";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setInt(1, slot);
+            pstmt.setBytes(2, item.serializeAsBytes());
+            pstmt.executeUpdate();
+            connection.commit();
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Error saving sharedchest item: " + e.getMessage());
+        }
+    }
+
+    public Map<Integer, ItemStack> loadAllSharedChestItems() {
+        Map<Integer, ItemStack> items = new HashMap<>();
+        String sql = "SELECT * FROM sharedchest ORDER BY slot";
+        try (Statement stmt = connection.createStatement()) {
+            ResultSet rs = stmt.executeQuery(sql);
+            while (rs.next()) {
+                byte[] data = rs.getBytes("item_data");
+                ItemStack item = ItemStack.deserializeBytes(data);
+                items.put(rs.getInt("slot"), item);
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Error loading sharedchest items: " + e.getMessage());
+        }
+        return items;
+    }
+
+    public void clearSharedChestItems() {
+        String sql = "DELETE FROM sharedchest";
+        try (Statement stmt = connection.createStatement()) {
+            stmt.executeUpdate(sql);
+            connection.commit();
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Error clearing sharedchest items: " + e.getMessage());
+        }
     }
 
     public void close() {

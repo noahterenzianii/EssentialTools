@@ -3,7 +3,7 @@ package it.noahterenzianii.EssentialTools.manager;
 import it.noahterenzianii.EssentialTools.Main;
 import it.noahterenzianii.EssentialTools.model.SavedLocation;
 import org.bukkit.Location;
-
+import it.noahterenzianii.EssentialTools.database.DatabaseManager;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -35,5 +35,9 @@ public class CoordinateManager {
 
     public void close() {
         db.close();
+    }
+
+    public DatabaseManager getDatabaseManager() {
+        return db;
     }
 }

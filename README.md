@@ -1,24 +1,25 @@
-# 🛠️ EssentialTools
+# EssentialTools
 
-A Minecraft Paper plugin to manage coordinates, locations, and get directional assistance in-game.
+A Minecraft Paper plugin to manage coordinates, locations, get directional assistance, and access a shared chest in-game.
 
 ---
 
-## ✨ Features
+## Features
 
 | Feature                   | Description                            |
 | ------------------------- | -------------------------------------- |
-| 📍 **Save Locations**     | Save coordinates with custom names     |
-| 🔍 **Retrieve Locations** | View saved coordinates instantly       |
-| 📋 **List All**           | See all saved locations at once        |
-| 🗑️ **Delete Locations**   | Remove saved locations                 |
-| 🧭 **Player Tracking**    | Show direction to reach online players |
-| 💾 **Auto-Save**          | Locations saved automatically in SQLite  |
-| 🎨 **Colored UI**         | Beautiful colored messages in chat     |
+| Save Locations            | Save coordinates with custom names     |
+| Retrieve Locations        | View saved coordinates instantly       |
+| List All                  | See all saved locations at once        |
+| Delete Locations          | Remove saved locations                 |
+| Player Tracking           | Show direction to reach online players |
+| Shared Chest              | Global shared chest accessible by all players |
+| Auto-Save                 | Data saved automatically in SQLite     |
+| Colored UI                | Beautiful colored messages in chat     |
 
 ---
 
-## 📥 Installation
+## Installation
 
 1. Download the latest `.jar` from the [Releases](../../releases)
 2. Place the file in your server's `plugins/` folder
@@ -27,7 +28,7 @@ A Minecraft Paper plugin to manage coordinates, locations, and get directional a
 
 ---
 
-## 📖 Commands
+## Commands
 
 ### Coordinate Management
 
@@ -48,9 +49,15 @@ A Minecraft Paper plugin to manage coordinates, locations, and get directional a
 | `/coord tooltip` | Toggle coordinate tooltip |
 | `/ping <player>` | Show direction to player  |
 
+### Shared Chest
+
+| Command         | Description                                      |
+| --------------- | ------------------------------------------------ |
+| `/sharedchest`  | Open the global shared chest (54 slots)          |
+
 ---
 
-## 💡 Examples
+## Examples
 
 ```bash
 /coord set home        # Save current position as "home"
@@ -60,11 +67,12 @@ A Minecraft Paper plugin to manage coordinates, locations, and get directional a
 /coord all             # Show all saved locations
 /coord                 # Toggle coordinate tooltip
 /ping Steve            # Show direction to Steve
+/sharedchest           # Open the shared chest
 ```
 
 ---
 
-## 📋 Permissions
+## Permissions
 
 | Permission             | Description               |
 | ---------------------- | ------------------------- |
@@ -73,9 +81,9 @@ A Minecraft Paper plugin to manage coordinates, locations, and get directional a
 
 ---
 
-## 🔧 Configuration
+## Configuration
 
-Locations are stored in a SQLite database at `plugins/EssentialTools/coordinates.db`.  
+Data is stored in a SQLite database at `plugins/EssentialTools/coordinates.db`.  
 The database is created automatically on first startup.
 
 ### Database Schema
@@ -88,6 +96,10 @@ CREATE TABLE IF NOT EXISTS coordinates (
     x REAL NOT NULL,
     y REAL NOT NULL,
     z REAL NOT NULL
-)
-```
+);
 
+CREATE TABLE IF NOT EXISTS sharedchest (
+    slot INTEGER PRIMARY KEY,
+    item_data BLOB NOT NULL
+);
+`````

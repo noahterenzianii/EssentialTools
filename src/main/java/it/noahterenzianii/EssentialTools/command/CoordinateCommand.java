@@ -49,7 +49,7 @@ public class CoordinateCommand implements CommandExecutor {
             case "get", "g" -> handleGetCoordCommand(sender, subArgs);
             case "set", "s" -> handleSetCoordCommand(sender, subArgs);
             case "del", "d", "remove", "r" -> handleDelCoordCommand(sender, subArgs);
-            case "all", "a" -> handleGetAllCoordsCommand(sender);
+            case "all", "a", "list" -> handleGetAllCoordsCommand(sender);
             default -> {
                 sender.sendMessage(ChatColor.RED + "Usage: /coord <get_set_del_all_tooltip> [arguments]");
                 yield true;
