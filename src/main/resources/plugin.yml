@@ -16,7 +16,7 @@ commands:
       /coord all - List all saved locations
   ping:
     description: Show visual indicator pointing at a target
-    usage: /ping <player_or_saved_location>
+    usage: /ping <player_or_saved_location> [seconds]
   sharedchest:
     description: Opens a shared chest accessible by all players
     usage: /sharedchest

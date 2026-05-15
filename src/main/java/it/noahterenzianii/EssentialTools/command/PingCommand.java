@@ -17,8 +17,8 @@ import org.bukkit.Color;
 import org.bukkit.Particle.DustOptions;
 
 public class PingCommand implements CommandExecutor {
-    private static final int PING_DURATION_TICKS = 20;
     private static final int PING_INTERVAL_TICKS = 10;
+    private static final int DEFAULT_DURATION_SECONDS = 10;
 
     private final Main plugin;
 
@@ -37,9 +37,23 @@ public class PingCommand implements CommandExecutor {
             return true;
         }
 
-        if (args.length != 1) {
-            player.sendMessage(ChatColor.RED + "Usage: /ping <player_or_saved_location>");
+        if (args.length < 1) {
+            player.sendMessage(ChatColor.RED + "Usage: /ping <player_or_saved_location> [seconds]");
             return true;
+        }
+
+        int durationSeconds = DEFAULT_DURATION_SECONDS;
+        if (args.length >= 2) {
+            try {
+                durationSeconds = Integer.parseInt(args[1]);
+                if (durationSeconds <= 0) {
+                    player.sendMessage(ChatColor.RED + "Duration must be positive!");
+                    return true;
+                }
+            } catch (NumberFormatException e) {
+                player.sendMessage(ChatColor.RED + "Invalid duration! Usage: /ping <player_or_saved_location> [seconds]");
+                return true;
+            }
         }
 
         Player targetPlayer = Bukkit.getPlayer(args[0]);
@@ -64,7 +78,8 @@ public class PingCommand implements CommandExecutor {
         player.sendMessage(ChatColor.GREEN + "Indicator pointing at " + ChatColor.WHITE + args[0] +
                 ChatColor.GREEN + " (" + ChatColor.GOLD + Math.round(player.getLocation().distance(targetLoc)) + " blocks away" + ChatColor.GREEN + ")!");
 
-        new PingRunnable(plugin, player, targetLoc, targetPlayer)
+        int maxIterations = durationSeconds * 20 / PING_INTERVAL_TICKS;
+        new PingRunnable(plugin, player, targetLoc, targetPlayer, maxIterations)
             .runTaskTimer(plugin, 0L, PING_INTERVAL_TICKS);
 
         return true;
@@ -75,6 +90,7 @@ public class PingCommand implements CommandExecutor {
         private final Player player;
         private final Location targetLoc;
         private final Player targetPlayer;
+        private final int maxIterations;
         private int ticks;
 
         private static final DustOptions[] BODY_LAYERS = {
@@ -89,16 +105,17 @@ public class PingCommand implements CommandExecutor {
             new DustOptions(Color.fromRGB(0, 160, 200), 1.8f),
         };
 
-        PingRunnable(Main plugin, Player player, Location targetLoc, Player targetPlayer) {
+        PingRunnable(Main plugin, Player player, Location targetLoc, Player targetPlayer, int maxIterations) {
             this.plugin = plugin;
             this.player = player;
             this.targetLoc = targetLoc;
             this.targetPlayer = targetPlayer;
+            this.maxIterations = maxIterations;
         }
 
         @Override
         public void run() {
-            if (!player.isOnline() || ticks >= PING_DURATION_TICKS) {
+            if (!player.isOnline() || ticks >= maxIterations) {
                 cancel();
                 return;
             }

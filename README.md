@@ -43,11 +43,11 @@ A Minecraft Paper plugin to manage coordinates, locations, get directional assis
 
 ### Utilities
 
-| Command          | Description               |
-| ---------------- | ------------------------- |
-| `/coord`         | Toggle coordinate tooltip |
-| `/coord tooltip` | Toggle coordinate tooltip |
-| `/ping <player>` | Show direction to player  |
+| Command                    | Description               |
+| -------------------------- | ------------------------- |
+| `/coord`                   | Toggle coordinate tooltip |
+| `/coord tooltip`           | Toggle coordinate tooltip |
+| `/ping <player> [seconds]` | Show direction to player  |
 
 ### Shared Chest
 
