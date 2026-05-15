@@ -181,6 +181,31 @@ public class DatabaseManager {
         }
     }
 
+    public void saveAllSharedChestItems(Map<Integer, ItemStack> items) {
+        String deleteSQL = "DELETE FROM sharedchest";
+        String insertSQL = "INSERT OR REPLACE INTO sharedchest (slot, item_data) VALUES (?, ?)";
+        try {
+            try (Statement stmt = connection.createStatement()) {
+                stmt.executeUpdate(deleteSQL);
+            }
+            try (PreparedStatement pstmt = connection.prepareStatement(insertSQL)) {
+                for (Map.Entry<Integer, ItemStack> entry : items.entrySet()) {
+                    pstmt.setInt(1, entry.getKey());
+                    pstmt.setBytes(2, entry.getValue().serializeAsBytes());
+                    pstmt.executeUpdate();
+                }
+            }
+            connection.commit();
+        } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException rollbackEx) {
+                plugin.getLogger().severe("Failed to rollback: " + rollbackEx.getMessage());
+            }
+            plugin.getLogger().severe("Error saving shared chest items: " + e.getMessage());
+        }
+    }
+
     public void close() {
         try {
             if (connection != null && !connection.isClosed()) {

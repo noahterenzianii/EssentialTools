@@ -7,7 +7,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class SharedChestManager {
 
@@ -15,31 +19,71 @@ public class SharedChestManager {
     private static final String CHEST_TITLE = "Shared Chest";
 
     private final Main plugin;
+    private final Set<UUID> activeViewers = new HashSet<>();
+    private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+    private Inventory sharedInventory;
+    private boolean loaded = false;
 
     public SharedChestManager(Main plugin) {
         this.plugin = plugin;
     }
 
-    public Inventory getChestInventory(Player player) {
-        SharedChestHolder holder = new SharedChestHolder();
-        Inventory inv = Bukkit.createInventory(holder, CHEST_SIZE, CHEST_TITLE);
+    public Inventory openChest(Player player) {
+        lock.writeLock().lock();
+        try {
+            if (!loaded) {
+                SharedChestHolder holder = new SharedChestHolder();
+                sharedInventory = Bukkit.createInventory(holder, CHEST_SIZE, CHEST_TITLE);
+                holder.setInventory(sharedInventory);
 
-        Map<Integer, ItemStack> items = plugin.getDatabaseManager().loadAllSharedChestItems();
-        for (Map.Entry<Integer, ItemStack> entry : items.entrySet()) {
-            inv.setItem(entry.getKey(), entry.getValue());
+                Map<Integer, ItemStack> items = plugin.getDatabaseManager().loadAllSharedChestItems();
+                for (Map.Entry<Integer, ItemStack> entry : items.entrySet()) {
+                    sharedInventory.setItem(entry.getKey(), entry.getValue().clone());
+                }
+
+                loaded = true;
+            }
+
+            activeViewers.add(player.getUniqueId());
+            return sharedInventory;
+        } finally {
+            lock.writeLock().unlock();
         }
-
-        return inv;
     }
 
-    public void saveChestInventory(Inventory inventory) {
-        plugin.getDatabaseManager().clearSharedChestItems();
+    public void removeViewer(Player player) {
+        lock.writeLock().lock();
+        try {
+            activeViewers.remove(player.getUniqueId());
+            if (activeViewers.isEmpty() && loaded && sharedInventory != null) {
+                plugin.getDatabaseManager().saveAllSharedChestItems(inventoryToMap(sharedInventory));
+                sharedInventory.clear();
+                sharedInventory = null;
+                loaded = false;
+            }
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
 
-        for (int i = 0; i < inventory.getSize(); i++) {
-            ItemStack item = inventory.getItem(i);
+    public void saveToDatabase() {
+        lock.readLock().lock();
+        try {
+            if (!loaded || sharedInventory == null) return;
+            plugin.getDatabaseManager().saveAllSharedChestItems(inventoryToMap(sharedInventory));
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
+    private Map<Integer, ItemStack> inventoryToMap(Inventory inventory) {
+        Map<Integer, ItemStack> items = new java.util.HashMap<>();
+        for (int slot = 0; slot < inventory.getSize(); slot++) {
+            ItemStack item = inventory.getItem(slot);
             if (item != null && !item.isEmpty()) {
-                plugin.getDatabaseManager().saveSharedChestItem(i, item);
+                items.put(slot, item.clone());
             }
         }
+        return items;
     }
 }

@@ -23,7 +23,7 @@ public class SharedChestCommand implements CommandExecutor {
             return true;
         }
 
-        Inventory chest = plugin.getSharedChestManager().getChestInventory(player);
+        Inventory chest = plugin.getSharedChestManager().openChest(player);
         player.openInventory(chest);
         return true;
     }

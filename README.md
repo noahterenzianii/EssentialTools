@@ -13,7 +13,7 @@ A Minecraft Paper plugin to manage coordinates, locations, get directional assis
 | List All                  | See all saved locations at once        |
 | Delete Locations          | Remove saved locations                 |
 | Player Tracking           | Show direction to reach online players |
-| Shared Chest              | Global shared chest accessible by all players |
+| Shared Chest              | Global shared chest with real-time shared view |
 | Auto-Save                 | Data saved automatically in SQLite     |
 | Colored UI                | Beautiful colored messages in chat     |
 
@@ -53,7 +53,7 @@ A Minecraft Paper plugin to manage coordinates, locations, get directional assis
 
 | Command         | Description                                      |
 | --------------- | ------------------------------------------------ |
-| `/sharedchest`  | Open the global shared chest (54 slots)          |
+| `/sharedchest`  | Open the global shared chest (54 slots, real-time) |
 
 ---
 

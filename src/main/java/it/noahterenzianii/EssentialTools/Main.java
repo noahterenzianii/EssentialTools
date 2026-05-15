@@ -42,6 +42,7 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        sharedChestManager.saveToDatabase();
         coordinateManager.close();
         getLogger().info("Plugin disabled.");
     }
