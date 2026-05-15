@@ -18,6 +18,15 @@ public class SharedChestCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        String cmdName = command.getName().toLowerCase();
+
+        return switch (cmdName) {
+            case "sharedchest"-> handleSharedChestCommand(sender, args);
+            default -> false;
+        };
+    }
+
+    private boolean handleSharedChestCommand(CommandSender sender, String[] args) {
         if (!(sender instanceof Player player)) {
             sender.sendMessage(ChatColor.RED + "Only players can use this command!");
             return true;

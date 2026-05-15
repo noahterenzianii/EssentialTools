@@ -20,3 +20,4 @@ commands:
   sharedchest:
     description: Opens a shared chest accessible by all players
     usage: /sharedchest
+    aliases: [sc]
